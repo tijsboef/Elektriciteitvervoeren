@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natuurkunde: Elektriciteit & Spanning</title>
+    <!-- Laad Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Laad de Inter-lettertypefamilie -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS-stijlen -->
+    <style>
+        :root {
+            --dalton-darkblue: #152D4F;
+            --dalton-lightblue: #00A1E4;
+            --dalton-orange: #F58220;
+        }
+        .nav-link.active {
+            background-color: var(--dalton-lightblue);
+            font-weight: bold;
+        }
+        .interactive-point {
+            fill: var(--dalton-orange);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.8;
+        }
+        .interactive-point:hover {
+            r: 15;
+            opacity: 1;
+            filter: drop-shadow(0 0 5px var(--dalton-orange));
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .good-job-show {
+            display: flex;
+            animation: fadeInScaleUp 0.3s ease-out forwards, fadeOut 0.5s 1.5s ease-in forwards;
+        }
+        @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(1.2); }
+        }
+        #modal.flex, #gemini-modal.flex { display: flex; }
+        #modal.hidden, #gemini-modal.hidden { display: none; }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--dalton-lightblue);
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dalton-darkblue': '#152D4F',
+                        'dalton-lightblue': '#00A1E4',
+                        'dalton-orange': '#F58220',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 font-['Inter',_sans_serif] text-gray-800 flex">
+
+    <!-- Navigatiemenu (Zijbalk) -->
+    <aside id="sidebar"
+        class="bg-dalton-darkblue text-white w-64 min-h-screen p-4 flex-shrink-0 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-30">
+        <h1 class="text-2xl font-bold mb-6 text-white">Natuurkunde</h1>
+        <nav class="flex-grow">
+            <ul>
+                <li class="mb-4"><a href="#module1" data-module="module1" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>De Centrale</span> <span class="reward-icon"></span></a></li>
+                <li class="mb-4"><a href="#module2" data-module="module2" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>Gelijk/Wissel</span> <span class="reward-icon" data-module-id="module2"></span></a></li>
+                <li class="mb-4"><a href="#module3" data-module="module3" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>Het Net</span> <span class="reward-icon"></span></a></li>
+                <li class="mb-4"><a href="#module4" data-module="module4" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>Transformator</span> <span class="reward-icon"></span></a></li>
+                <li class="mb-4"><a href="#module5" data-module="module5" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>Rekenen</span> <span class="reward-icon" data-module-id="module5"></span></a></li>
+                <li class="mb-4"><a href="#module6" data-module="module6" class="nav-link flex items-center justify-between p-2 rounded-lg hover:bg-dalton-lightblue transition-colors"><span>Plus: Ideaal</span> <span class="reward-icon" data-module-id="module6"></span></a></li>
+            </ul>
+        </nav>
+        <div class="text-sm text-gray-400">© Dalton Voorburg</div>
+    </aside>
+
+    <!-- Hoofdinhoud -->
+    <main class="flex-1 transition-all duration-300 ease-in-out">
+        <!-- Header -->
+        <header class="bg-white shadow-md p-4 flex items-center justify-between sticky top-0 z-20">
+            <button id="menu-toggle" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <h2 id="module-title" class="text-xl font-semibold text-dalton-darkblue">Selecteer een module</h2>
+            <div class="w-1/3">
+                <div class="bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div id="progress-bar" class="bg-dalton-orange h-full rounded-full transition-all duration-500"
+                        style="width: 0%;"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8">
+            <!-- Dynamische content voor modules wordt hier geladen -->
+            <section id="module-container">
+                <!-- Module 1: De Elektriciteitscentrale -->
+                <div id="module1" class="module-content hidden">
+                    <div class="flex justify-between items-start">
+                         <div>
+                            <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 1: De Elektriciteitscentrale</h3>
+                            <p class="mb-6">Een elektriciteitscentrale zet een vorm van energie (zoals warmte uit brandstof) om in elektrische energie.<br>Klik op de onderdelen voor meer informatie, of stel een vraag aan de expert.</p>
+                         </div>
+                         <button id="ask-expert-btn" class="bg-dalton-darkblue text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-80 transition-colors flex-shrink-0">✨ Vraag het de expert</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg relative">
+                        <!-- Gedetailleerde SVG-illustratie -->
+                        <svg viewBox="0 0 800 500" class="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+                            <!-- Definities voor gradiënten etc. -->
+                            <defs>
+                                <linearGradient id="grad-silver" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#d1d5db;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#9ca3af;stop-opacity:1" />
+                                </linearGradient>
+                                <linearGradient id="grad-orange" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Boiler House (Cross-section) -->
+                            <path d="M 40 400 L 40 120 L 220 120 L 220 400 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                            <!-- Internal pipes and burner -->
+                            <path d="M 100 380 L 100 200 H 160 V 380" stroke="#94a3b8" stroke-width="8" fill="none" />
+                            <path d="M 100 280 H 160" stroke="#94a3b8" stroke-width="8" fill="none" />
+                            <path d="M 130 380 V 350" stroke="#fb923c" stroke-width="4" fill="none" />
+                            <path d="M 110 350 C 120 330, 140 330, 150 350 L 130 380 Z" fill="#f59e0b"/>
+                            <text x="130" y="420" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Ketel</text>
+                            
+                            <!-- Smokestacks -->
+                            <rect x="80" y="50" width="30" height="70" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
+                            <rect x="140" y="50" width="30" height="70" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
+
+                            <!-- Fuel Line -->
+                            <text x="25" y="395" text-anchor="middle" font-size="14">Brandstof</text>
+                            <path d="M 0 365 L 70 365" fill="none" stroke="#f97316" stroke-width="10"/>
+
+                            <!-- Turbine (Cross-section) -->
+                            <path d="M280 200 L 400 215 L 400 285 L 280 300 Z" fill="url(#grad-silver)" stroke="#4b5563" stroke-width="2"/>
+                            <path d="M 290 250 H 390" stroke="#4b5563" stroke-width="3"/>
+                            <!-- Turbine blades -->
+                            <path d="M 310 230 L 310 270 M 340 225 L 340 275 M 370 220 L 370 280" stroke="#6b7280" stroke-width="2"/>
+                            <text x="340" y="195" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Turbine</text>
+
+                            <!-- Generator (Cross-section) -->
+                            <path d="M420 200 L 540 200 L 540 300 L 420 300 Z" fill="url(#grad-silver)" stroke="#4b5563" stroke-width="2"/>
+                            <!-- Coils -->
+                            <path d="M450 210 C 430 220, 430 230, 450 240 S 430 250, 450 260 S 430 270, 450 280 S 430 290, 450 300" stroke="#f59e0b" stroke-width="3" fill="none" />
+                            <path d="M510 210 C 530 220, 530 230, 510 240 S 530 250, 510 260 S 530 270, 510 280 S 530 290, 510 300" stroke="#f59e0b" stroke-width="3" fill="none" />
+                            <!-- Magnet -->
+                            <path d="M 450 250 L 510 250 M 480 220 L 480 280" stroke="#1e3a8a" stroke-width="4"/>
+                            <text x="480" y="185" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Generator</text>
+
+                             <!-- Transformer (Cross-section) -->
+                            <rect x="580" y="200" width="150" height="100" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+                            <!-- Iron Core -->
+                            <path d="M 600 215 H 710 V 285 H 600 V 215 M 620 230 V 270 H 690 V 230 H 620 Z" fill="#e5e7eb" stroke="#9ca3af" stroke-width="1.5" />
+                            <!-- Coils on core -->
+                             <path d="M620 230 C 610 230, 610 240, 620 240 S 610 250, 620 250 S 610 260, 620 260 S 610 270, 620 270" stroke="#00A1E4" stroke-width="3" fill="none" />
+                             <path d="M690 230 C 700 230, 700 235, 690 235 S 700 240, 690 240 S 700 245, 690 245 S 700 250, 690 250 S 700 255, 690 255 S 700 260, 690 260 S 700 265, 690 265 S 700 270, 690 270" stroke="#F58220" stroke-width="3" fill="none" />
+                            <text x="655" y="185" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Transformator</text>
+
+                            <!-- Condenser (Cross-section) -->
+                            <rect x="320" y="350" width="160" height="70" rx="10" fill="#fde047" stroke="#f59e0b" stroke-width="2"/>
+                            <path d="M 330 385 C 340 365, 360 365, 370 385 S 390 365, 400 385 S 420 365, 430 385" stroke="#60a5fa" stroke-width="4" fill="none"/>
+                            <text x="400" y="440" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Condensor</text>
+                            
+                            <!-- Cooling water pipes and labels -->
+                            <path d="M 300 365 L 320 365" stroke="#0ea5e9" stroke-width="4" fill="none"/>
+                            <text x="295" y="360" text-anchor="end" font-size="12">Koelwater in</text>
+                            <path d="M 480 365 L 500 365" stroke="#f43f5e" stroke-width="4" fill="none"/>
+                            <text x="505" y="360" text-anchor="start" font-size="12">Koelwater uit</text>
+
+                            <!-- Pipes and shafts connecting components -->
+                            <path d="M 220 250 L 280 250" stroke="#fca5a5" stroke-width="10" fill="none" /> <!-- Steam pipe -->
+                            <path d="M 400 250 L 400 350" stroke="#e5e7eb" stroke-width="10" fill="none" /> <!-- Steam to condenser -->
+                            <path d="M 400 385 L 100 385 L 100 380" stroke="#a5f3fc" stroke-width="6" fill="none" /> <!-- Water to boiler -->
+                            <path d="M 395 250 H 420" stroke="#6b7280" stroke-width="4"/> <!-- Turbine to Generator -->
+                            <path d="M 540 250 H 580" stroke="#a1a1aa" stroke-width="8" fill="none" /> <!-- Power out -->
+                            <path d="M 730 250 H 800" stroke="#a1a1aa" stroke-width="8" fill="none" /> <!-- Power out -->
+
+
+                            <!-- Interactive Points -->
+                            <circle cx="130" cy="280" r="10" class="interactive-point" data-title="Ketel" data-text="In de ketel wordt brandstof (zoals gas of biomassa) verbrand. De warmte die vrijkomt, wordt gebruikt om water te verhitten tot stoom onder hoge druk."/>
+                            <circle cx="35" cy="365" r="10" class="interactive-point" data-title="Brandstofaanvoer" data-text="Hier wordt de brandstof aangevoerd die nodig is om warmte op te wekken. Dit kan aardgas, kolen, biomassa of huisvuil zijn."/>
+                            <circle cx="340" cy="250" r="10" class="interactive-point" data-title="Turbine" data-text="De hete stoom spuit met grote kracht tegen de schoepen van de turbine, waardoor deze met hoge snelheid gaat ronddraaien. Dit is vergelijkbaar met hoe wind een windmolen laat draaien."/>
+                            <circle cx="480" cy="250" r="10" class="interactive-point" data-title="Generator" data-text="De generator is met een as verbonden aan de turbine. In de generator draait een enorme magneet rond in een spoel van koperdraad. Deze beweging wekt elektrische spanning op."/>
+                            <circle cx="400" cy="385" r="10" class="interactive-point" data-title="Condensor" data-text="Nadat de stoom de turbine heeft aangedreven, wordt deze in de condensor geleid. Hier wordt de stoom afgekoeld met koelwater, waardoor het weer vloeibaar water wordt. Dit water kan opnieuw worden gebruikt."/>
+                            <circle cx="655" cy="250" r="10" class="interactive-point" data-title="Transformator" data-text="De opgewekte spanning is nog niet hoog genoeg voor transport. De transformator verhoogt de spanning naar honderdduizenden volts, zodat de elektriciteit met weinig verlies over grote afstanden kan worden vervoerd."/>
+
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Module 2: Gelijk- vs. Wisselspanning -->
+                <div id="module2" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 2: Gelijk- vs. Wisselspanning</h3>
+                    <p class="mb-6">Elektriciteit kan op twee manieren stromen: als gelijkspanning (DC) of als wisselspanning (AC). Hieronder zie je het verschil.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <h4 class="font-bold text-lg mb-2 text-center">Gelijkspanning (DC - Direct Current)</h4>
+                            <svg viewBox="0 0 200 120" class="mx-auto h-40">
+                                <!-- Y-axis -->
+                                <line x1="20" y1="10" x2="20" y2="110" stroke="#333" stroke-width="1.5"/>
+                                <text x="10" y="15" text-anchor="middle" font-size="12" font-weight="bold">U</text>
+                                <text x="10" y="60" text-anchor="middle" font-size="10" transform="rotate(-90, 10, 60)">Spanning</text>
+                                <!-- X-axis -->
+                                <line x1="20" y1="60" x2="180" y2="60" stroke="#333" stroke-width="1.5"/>
+                                <text x="190" y="65" text-anchor="middle" font-size="12" font-weight="bold">tijd</text>
+                                <!-- DC Line -->
+                                <line x1="20" y1="30" x2="180" y2="30" stroke="var(--dalton-lightblue)" stroke-width="3"/>
+                            </svg>
+                            <p class="mt-4 text-sm text-gray-600 px-4">Bij gelijkspanning, zoals uit een batterij, bewegen de elektronen constant in dezelfde richting. De spanning is constant.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                             <h4 class="font-bold text-lg mb-2 text-center">Wisselspanning (AC - Alternating Current)</h4>
+                            <svg viewBox="0 0 200 120" class="mx-auto h-40">
+                                <!-- Y-axis -->
+                                <line x1="20" y1="10" x2="20" y2="110" stroke="#333" stroke-width="1.5"/>
+                                <text x="10" y="15" text-anchor="middle" font-size="12" font-weight="bold">U</text>
+                                <text x="10" y="60" text-anchor="middle" font-size="10" transform="rotate(-90, 10, 60)">Spanning</text>
+                                <!-- X-axis -->
+                                <line x1="20" y1="60" x2="180" y2="60" stroke="#333" stroke-width="1.5"/>
+                                <text x="190" y="65" text-anchor="middle" font-size="12" font-weight="bold">tijd</text>
+                                <!-- AC Sine Wave -->
+                                <path d="M 20 60 Q 60 10, 100 60 T 180 60" stroke="var(--dalton-orange)" stroke-width="3" fill="none"/>
+                            </svg>
+                             <p class="mt-4 text-sm text-gray-600 px-4">Bij wisselspanning, zoals uit het stopcontact, wisselen de elektronen continu van richting. In Europa gebeurt dit 50 keer per seconde (50 Hz).</p>
+                        </div>
+                    </div>
+                    <div id="quiz-container" class="mt-8 bg-white p-6 rounded-lg shadow-lg">
+                        <h4 class="font-bold text-xl mb-4">Test je kennis!</h4>
+                        <!-- Quizvragen worden hier door JavaScript ingevoegd -->
+                    </div>
+                </div>
+
+                <!-- Module 3: Het Elektriciteitsnet -->
+                <div id="module3" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 3: Het Elektriciteitsnet</h3>
+                    <p class="mb-6">Hoe komt de stroom van de centrale bij jou thuis? Dat gebeurt via het elektriciteitsnet. Zweef met je muis over de verschillende onderdelen om de spanning te zien.</p>
+                    <div class="bg-white p-6 rounded-lg shadow-lg relative overflow-hidden">
+                        <svg viewBox="0 0 800 400" class="w-full h-auto">
+                           <style>
+                                .icon-building { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 2; }
+                                .icon-pylon { stroke: #6b7280; stroke-width: 3; fill: none; }
+                                .icon-house { fill: #fecaca; stroke: #dc2626; stroke-width: 2; }
+                                .icon-transformer { fill: #d1fae5; stroke: #047857; stroke-width: 2; }
+                                .network-part { cursor: pointer; }
+                           </style>
+                            
+                           <!-- Interactive Groups -->
+                           <g class="network-part" data-info="<strong>Centrale:</strong> Wekt stroom op met een spanning van ca. 20.000 V (20 kV).">
+                                <rect class="icon-building" x="50" y="280" width="80" height="60" />
+                                <rect class="icon-building" x="70" y="240" width="40" height="40" />
+                                <path d="M 90 240 L 90 220" stroke="#94a3b8" stroke-width="4" />
+                                <text x="90" y="360" text-anchor="middle" font-size="15" font-weight="semibold" fill="#152D4F">Centrale</text>
+                           </g>
+
+                           <g class="network-part" data-info="<strong>Hoogspanningsnet:</strong> Vervoert stroom onder zeer hoge spanning (380.000 V) om energieverlies te beperken.">
+                                <path d="M 130 310 C 180 250, 220 220, 260 205" stroke="#00A1E4" stroke-width="4" fill="none"></path>
+                                <path d="M 280 205 L 410 205" stroke="#00A1E4" stroke-width="4" fill="none"></path>
+                                <g class="icon-pylon" transform="translate(250, 280)">
+                                    <path d="M 0 0 L 20 -80 L 40 0 M 10 -40 H 30" />
+                                </g>
+                                <g class="icon-pylon" transform="translate(400, 280)">
+                                    <path d="M 0 0 L 20 -80 L 40 0 M 10 -40 H 30" />
+                                </g>
+                                <text x="345" y="180" text-anchor="middle" font-size="15" font-weight="semibold" fill="#152D4F">Hoogspanningsnet</text>
+                           </g>
+
+                           <g class="network-part" data-info="<strong>Wijktransformator:</strong> Zet de hoge spanning om naar een lagere, veiligere spanning van 230 V voor de woonwijk.">
+                                <path d="M 430 205 C 480 220, 530 280, 580 325" stroke="#F58220" stroke-width="4" fill="none"></path>
+                                <g transform="translate(580, 310)">
+                                    <rect class="icon-transformer" x="0" y="0" width="60" height="30" />
+                                    <text x="30" y="50" text-anchor="middle" font-size="15" font-weight="semibold" fill="#152D4F">Wijktransformator</text>
+                                </g>
+                           </g>
+
+                           <g class="network-part" data-info="<strong>Huis:</strong> Hier komt 230 V binnen voor al je apparaten.">
+                                <path d="M 640 325 H 700" stroke="#F58220" stroke-width="4" fill="none"></path>
+                                <g transform="translate(700, 280)">
+                                    <path class="icon-house" d="M 0 60 L 0 20 L 30 0 L 60 20 L 60 60 Z" />
+                                    <rect fill="white" x="20" y="30" width="20" height="30" />
+                                    <text x="30" y="80" text-anchor="middle" font-size="15" font-weight="semibold" fill="#152D4F">Huis</text>
+                                </g>
+                           </g>
+                           
+                           <g class="network-part" data-info="<strong>Telefoonoplader:</strong> Een kleine transformator in je oplader zet de 230 V om naar 5 V gelijkspanning om je telefoon veilig op te laden.">
+                                <!-- The charger visual inside the house -->
+                                 <g transform="translate(705, 320)">
+                                     <rect x="0" y="0" width="10" height="8" fill="#333" rx="1"/>
+                                     <line x1="10" y1="4" x2="15" y2="4" stroke="#333" stroke-width="1"/>
+                                     <rect x="15" y="-2" width="5" height="12" fill="#444" rx="1"/>
+                                </g>
+                           </g>
+                        </svg>
+                        <div id="network-tooltip" class="absolute bg-dalton-darkblue text-white p-3 rounded-lg text-sm shadow-xl pointer-events-none opacity-0 transition-opacity"></div>
+                    </div>
+                </div>
+
+
+                <!-- Module 4: De Transformator -->
+                <div id="module4" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 4: De Transformator</h3>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="bg-white p-6 rounded-lg shadow-lg">
+                            <canvas id="transformer-animation" height="250"></canvas>
+                        </div>
+                        <div class="prose">
+                            <p>Een transformator kan een wisselspanning omzetten naar een hogere of lagere wisselspanning. Hij bestaat uit:</p>
+                            <ul>
+                                <li>Een <strong>ijzeren kern</strong>: deze 'glijbaan' geleidt het magnetisch veld.</li>
+                                <li>Een <strong>primaire spoel</strong>: hier sluit je de ingangsspanning op aan.</li>
+                                <li>Een <strong>secundaire spoel</strong>: hier ontstaat de uitgangsspanning.</li>
+                            </ul>
+                            <p><strong>Hoe werkt het?</strong></p>
+                            <ol>
+                                <li>De wisselstroom in de primaire spoel wekt een steeds wisselend magnetisch veld op.</li>
+                                <li>De ijzeren kern geleidt dit veld naar de secundaire spoel.</li>
+                                <li>Het veranderende magnetisch veld in de secundaire spoel wekt een wisselspanning op (inductie).</li>
+                            </ol>
+                            <p>Het aantal windingen (lusjes koperdraad) op de spoelen bepaalt of de spanning omhoog of omlaag gaat.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5: Rekenen met Transformatoren -->
+                <div id="module5" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 5: Rekenen met Transformatoren</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div id="exercise-step-1-5">
+                            <h4 class="font-bold text-lg mb-2">Stap 1: Oriënteren & Voorspellen</h4>
+                            <p class="mb-4">Je gaat een opgave maken over de basisformule van de transformator. Bekijk de formule en start de opgave als je er klaar voor bent.</p>
+                            <button id="show-formula-btn-5" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors mb-4">Toon Formule</button>
+                            <div id="formula-explanation-5" class="hidden prose prose-sm mb-4">
+                                <div class="bg-yellow-100 border-l-4 border-yellow-400 p-4">
+                                   <p class="font-mono font-bold">Up / Us = Np / Ns</p>
+                                   <ul>
+                                       <li><strong>Up</strong>: Primaire spanning (Volt, V)</li>
+                                       <li><strong>Us</strong>: Secundaire spanning (Volt, V)</li>
+                                       <li><strong>Np</strong>: Aantal windingen primair</li>
+                                       <li><strong>Ns</strong>: Aantal windingen secundair</li>
+                                   </ul>
+                                </div>
+                            </div>
+                            <button id="start-exercise-btn-5" class="bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">Start Opgave</button>
+                        </div>
+                        
+                        <div id="exercise-step-2-5" class="hidden">
+                            <h4 class="font-bold text-lg mb-2">Stap 2: Nadenken & Produceren</h4>
+                            <div id="question-5" class="mb-4 prose bg-gray-50 p-4 rounded-md"></div>
+                            <div class="flex justify-center mb-4">
+                                <button id="generate-story-btn-5" class="hidden bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors">✨ Maak een verhaaltjessom</button>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <input type="number" id="answer-5" placeholder="Jouw antwoord"
+                                    class="border-gray-300 rounded-md shadow-sm focus:border-dalton-lightblue focus:ring focus:ring-dalton-lightblue focus:ring-opacity-50 w-full">
+                                <button id="check-btn-5"
+                                    class="bg-dalton-lightblue text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-500 transition-colors">Controleer</button>
+                            </div>
+                        </div>
+
+                        <div id="exercise-step-3-5" class="hidden">
+                            <h4 class="font-bold text-lg mb-2">Stap 3: Terugblikken & Vervolgactie</h4>
+                             <div id="feedback-5" class="mt-4 text-sm p-4 rounded-lg"></div>
+                             <div id="explanation-container-5" class="hidden mt-4">
+                                <h5 class="font-bold mb-2">Stap-voor-stap uitleg:</h5>
+                                <div id="explanation-content-5" class="prose prose-sm bg-green-50 p-4 rounded-lg border border-green-200"></div>
+                            </div>
+                            <button id="new-exercise-btn-5" class="mt-4 bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">Nieuwe Opgave</button>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Module 6: De Ideale Transformator (Plusstof) -->
+                <div id="module6" class="module-content hidden">
+                    <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 6: De Ideale Transformator (Plusstof)</h3>
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div id="exercise-step-1-6">
+                            <h4 class="font-bold text-lg mb-2">Stap 1: Oriënteren & Voorspellen</h4>
+                            <p class="mb-4">Je gaat een opgave maken over de ideale transformator. Hiervoor combineer je de formule voor spanning/windingen met de formule voor vermogen.</p>
+                            <button id="show-formula-btn-6" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors mb-4">Toon Formules</button>
+                            <div id="formula-explanation-6" class="hidden prose prose-sm mb-4">
+                                <div class="bg-yellow-100 border-l-4 border-yellow-400 p-4 mb-4">
+                                    <p class="font-mono font-bold">Up / Us = Np / Ns</p>
+                                    <p>Deze formule koppelt de spanningen aan de windingen.</p>
+                                </div>
+                                <div class="bg-purple-100 border-l-4 border-purple-400 p-4">
+                                    <p class="font-mono font-bold">Pp = Ps  &nbsp; → &nbsp; Up * Ip = Us * Is</p>
+                                    <p>Bij een 'ideale' transformator is het vermogen (P) aan beide kanten gelijk.</p>
+                                </div>
+                            </div>
+                            <button id="start-exercise-btn-6" class="bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">Start Opgave</button>
+                        </div>
+                        
+                        <div id="exercise-step-2-6" class="hidden">
+                            <h4 class="font-bold text-lg mb-2">Stap 2: Nadenken & Produceren</h4>
+                            <div id="question-6" class="mb-4 prose"></div>
+                            <div class="flex items-center gap-4">
+                                <input type="number" id="answer-6" placeholder="Jouw antwoord"
+                                    class="border-gray-300 rounded-md shadow-sm focus:border-dalton-lightblue focus:ring focus:ring-dalton-lightblue focus:ring-opacity-50 w-full">
+                                <button id="check-btn-6"
+                                    class="bg-dalton-lightblue text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-500 transition-colors">Controleer</button>
+                            </div>
+                        </div>
+
+                        <div id="exercise-step-3-6" class="hidden">
+                            <h4 class="font-bold text-lg mb-2">Stap 3: Terugblikken & Vervolgactie</h4>
+                             <div id="feedback-6" class="mt-4 text-sm p-4 rounded-lg"></div>
+                             <div id="explanation-container-6" class="hidden mt-4">
+                                <h5 class="font-bold mb-2">Stap-voor-stap uitleg:</h5>
+                                <div id="explanation-content-6" class="prose prose-sm bg-green-50 p-4 rounded-lg border border-green-200"></div>
+                            </div>
+                            <button id="new-exercise-btn-6" class="mt-4 bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors">Nieuwe Opgave</button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal voor uitleg (Module 1) -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-md p-6 relative transform transition-transform duration-300 scale-95">
+            <h4 id="modal-title" class="text-xl font-bold text-dalton-darkblue mb-3">Titel</h4>
+            <p id="modal-text" class="text-gray-700">Tekst</p>
+            <button id="modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+     <!-- Modal voor Gemini Expert -->
+    <div id="gemini-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg p-6 relative flex flex-col" style="height: 80vh; max-height: 600px;">
+            <div class="flex-shrink-0">
+                 <h4 class="text-xl font-bold text-dalton-darkblue mb-3">✨ Vraag het de expert</h4>
+                 <p class="text-sm text-gray-600 mb-4">Stel een vraag over dit onderwerp en krijg antwoord van een AI-assistent.</p>
+                 <textarea id="gemini-question" class="w-full border-gray-300 rounded-md p-2 focus:border-dalton-lightblue focus:ring focus:ring-dalton-lightblue focus:ring-opacity-50" rows="3" placeholder="Typ hier je vraag..."></textarea>
+                 <button id="gemini-ask-btn" class="mt-2 w-full bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:bg-gray-400">Stel je vraag</button>
+                 <button id="gemini-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                 </button>
+            </div>
+            <div id="gemini-response-container" class="mt-4 flex-grow overflow-y-auto bg-gray-50 p-4 rounded-md">
+                <div id="gemini-loading" class="hidden justify-center items-center h-full">
+                    <div class="spinner"></div>
+                </div>
+                <div id="gemini-response" class="prose prose-sm max-w-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Good job animatie -->
+    <div id="good-job-animation" class="hidden fixed inset-0 items-center justify-center z-50 pointer-events-none">
+        <div class="text-6xl font-bold text-dalton-orange" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+            Goed gedaan!
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+
+    <!-- Applicatie JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- STATE MANAGEMENT ---
+            const state = {
+                activeModule: null,
+                progress: {
+                    module2: { correct: 0, total: 3 },
+                    module5: { correct: 0, required: 5 },
+                    module6: { correct: 0, required: 5 },
+                }
+            };
+
+            // --- DOM ELEMENTEN ---
+            const modules = document.querySelectorAll('.module-content');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const moduleTitle = document.getElementById('module-title');
+            const progressBar = document.getElementById('progress-bar');
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            // --- INITIATIE ---
+            function init() {
+                setupEventListeners();
+                // showModule('module1'); 
+            }
+
+            // --- EVENT LISTENERS ---
+            function setupEventListeners() {
+                // Navigatie
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const moduleName = e.currentTarget.dataset.module;
+                        showModule(moduleName);
+                        if (window.innerWidth < 768) {
+                            sidebar.classList.add('-translate-x-full');
+                            sidebarOverlay.classList.add('hidden');
+                        }
+                    });
+                });
+                
+                // Mobiel menu
+                menuToggle.addEventListener('click', () => {
+                     sidebar.classList.toggle('-translate-x-full');
+                     sidebarOverlay.classList.toggle('hidden');
+                });
+                sidebarOverlay.addEventListener('click', () => {
+                     sidebar.classList.add('-translate-x-full');
+                     sidebarOverlay.classList.add('hidden');
+                });
+
+                // Modules
+                setupModule1();
+                setupModule2();
+                setupModule3();
+                setupModule4();
+                setupExerciseModule('5');
+                setupExerciseModule('6');
+            }
+            
+            // --- MODULES BEHEREN ---
+            function showModule(moduleName) {
+                state.activeModule = moduleName;
+                modules.forEach(module => module.classList.add('hidden'));
+                const activeModuleElement = document.getElementById(moduleName);
+                if (activeModuleElement) {
+                    activeModuleElement.classList.remove('hidden');
+                    const title = document.querySelector(`a[data-module="${moduleName}"] span`).textContent;
+                    moduleTitle.textContent = title;
+                }
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.module === moduleName);
+                });
+                
+                if (moduleName === 'module4') {
+                    startTransformerAnimation();
+                } else if (moduleName === 'module5') {
+                    resetExerciseModule('5');
+                } else if (moduleName === 'module6') {
+                    resetExerciseModule('6');
+                }
+            }
+            
+            // --- VOORTGANG EN GAMIFICATION ---
+            function updateProgress() {
+                const totalModulesWithProgress = 3; // module 2, 5, 6
+                let completedModules = 0;
+                if (state.progress.module2.correct === state.progress.module2.total) completedModules++;
+                if (state.progress.module5.correct >= state.progress.module5.required) completedModules++;
+                if (state.progress.module6.correct >= state.progress.module6.required) completedModules++;
+                
+                const progressPercentage = (completedModules / totalModulesWithProgress) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+
+                updateRewardIcon('module2', state.progress.module2.correct === state.progress.module2.total);
+                updateRewardIcon('module5', state.progress.module5.correct >= state.progress.module5.required);
+                updateRewardIcon('module6', state.progress.module6.correct >= state.progress.module6.required);
+            }
+            
+            function updateRewardIcon(module, isComplete) {
+                const iconElement = document.querySelector(`.nav-link[data-module-id="${module}"] .reward-icon`);
+                if (iconElement) {
+                    iconElement.textContent = isComplete ? '⭐' : '';
+                }
+            }
+            
+            function showGoodJobAnimation() {
+                const animationEl = document.getElementById('good-job-animation');
+                animationEl.classList.remove('hidden');
+                animationEl.classList.add('good-job-show');
+                setTimeout(() => {
+                    animationEl.classList.remove('good-job-show');
+                    animationEl.classList.add('hidden');
+                }, 2000);
+            }
+
+            // --- GEMINI API INTEGRATIE ---
+            async function callGemini(systemPrompt, userQuery, loadingElement, responseElement, buttonElement) {
+                if(buttonElement) buttonElement.disabled = true;
+                loadingElement.style.display = 'flex';
+                responseElement.innerHTML = '';
+                
+                const apiKey = ""; // Wordt door de omgeving afgehandeld
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        let text = candidate.content.parts[0].text;
+                        // Simpele markdown naar HTML conversie
+                        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                   .replace(/\n/g, '<br>');
+                        responseElement.innerHTML = text;
+                    } else {
+                        throw new Error("Geen inhoud ontvangen van de API.");
+                    }
+
+                } catch (error) {
+                    console.error("Gemini API call error:", error);
+                    responseElement.innerHTML = '<p class="text-red-500">Oeps, er ging iets mis. Probeer het later opnieuw.</p>';
+                } finally {
+                    loadingElement.style.display = 'none';
+                    if(buttonElement) buttonElement.disabled = false;
+                }
+            }
+
+
+            // --- SPECIFIEKE MODULE LOGICA ---
+            function setupModule1() {
+                const modal = document.getElementById('modal');
+                const modalContent = document.getElementById('modal-content');
+                const modalTitle = document.getElementById('modal-title');
+                const modalText = document.getElementById('modal-text');
+                const modalClose = document.getElementById('modal-close');
+                
+                // Gemini Expert Modal Elements
+                const geminiModal = document.getElementById('gemini-modal');
+                const geminiModalClose = document.getElementById('gemini-modal-close');
+                const askExpertBtn = document.getElementById('ask-expert-btn');
+                const geminiAskBtn = document.getElementById('gemini-ask-btn');
+                const geminiQuestion = document.getElementById('gemini-question');
+                const geminiLoading = document.getElementById('gemini-loading');
+                const geminiResponse = document.getElementById('gemini-response');
+
+                // Standard info points
+                document.querySelectorAll('.interactive-point').forEach(point => {
+                    point.addEventListener('click', (e) => {
+                        modalTitle.textContent = e.target.dataset.title;
+                        modalText.textContent = e.target.dataset.text;
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                    });
+                });
+                
+                const closeModal = () => modal.classList.add('hidden');
+                modalClose.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+                // Gemini Expert Modal Logic
+                const openGeminiModal = () => {
+                    geminiQuestion.value = '';
+                    geminiResponse.innerHTML = '';
+                    geminiModal.classList.remove('hidden');
+                    geminiModal.classList.add('flex');
+                };
+                const closeGeminiModal = () => geminiModal.classList.add('hidden');
+
+                askExpertBtn.addEventListener('click', openGeminiModal);
+                geminiModalClose.addEventListener('click', closeGeminiModal);
+                geminiModal.addEventListener('click', (e) => { if(e.target === geminiModal) closeGeminiModal(); });
+
+                geminiAskBtn.addEventListener('click', () => {
+                    const question = geminiQuestion.value;
+                    if (question.trim() === '') return;
+
+                    const systemPrompt = "Je bent een vriendelijke en deskundige natuurkundedocent voor 3 HAVO. Beantwoord de volgende vraag van een leerling over de werking van een elektriciteitscentrale. Gebruik duidelijke taal en analogieën die relevant zijn voor een 15-jarige. Houd het antwoord beknopt (maximaal 4 zinnen).";
+                    callGemini(systemPrompt, question, geminiLoading, geminiResponse, geminiAskBtn);
+                });
+            }
+
+            function setupModule2() {
+                const quizContainer = document.getElementById('quiz-container');
+                const questions = [
+                    { q: "Welk type spanning komt er uit een standaard stopcontact in Nederland?", a: ["Gelijkspanning (DC)", "Wisselspanning (AC)", "Beide"], correct: 1 },
+                    { q: "Wat is een kenmerk van gelijkspanning?", a: ["De stroomrichting wisselt constant.", "De spanning heeft een vaste waarde.", "Het is ideaal voor transport over lange afstanden."], correct: 1 },
+                    { q: "Een laptop-adapter zet de spanning van het stopcontact om. Wat voor spanning levert de adapter aan de laptop zelf?", a: ["Hogere wisselspanning", "Lagere wisselspanning", "Lagere gelijkspanning"], correct: 2 }
+                ];
+                let html = `<h4 class="font-bold text-xl mb-4">Test je kennis!</h4>`;
+                questions.forEach((item, index) => {
+                    html += `<div class="mb-6" id="quiz-q-${index}"><p class="font-semibold mb-2">${index + 1}. ${item.q}</p><div class="space-y-2">`;
+                    item.a.forEach((answer, ansIndex) => {
+                        html += `<button data-q="${index}" data-a="${ansIndex}" class="quiz-option block w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">${answer}</button>`;
+                    });
+                    html += `</div><div class="feedback mt-2 text-sm"></div></div>`;
+                });
+                quizContainer.innerHTML = html;
+                quizContainer.addEventListener('click', e => {
+                    if (e.target.classList.contains('quiz-option')) {
+                        const qIndex = parseInt(e.target.dataset.q);
+                        const aIndex = parseInt(e.target.dataset.a);
+                        const question = questions[qIndex];
+                        const feedbackEl = document.querySelector(`#quiz-q-${qIndex} .feedback`);
+                        document.querySelectorAll(`#quiz-q-${qIndex} .quiz-option`).forEach(btn => btn.disabled = true);
+                        if (aIndex === question.correct) {
+                            e.target.classList.add('bg-green-200', 'font-bold');
+                            feedbackEl.innerHTML = `<span class="text-green-600">Correct!</span>`;
+                            state.progress.module2.correct++;
+                        } else {
+                            e.target.classList.add('bg-red-200');
+                            feedbackEl.innerHTML = `<span class="text-red-600">Helaas, het juiste antwoord was '${question.a[question.correct]}'.</span>`;
+                            document.querySelector(`#quiz-q-${qIndex} .quiz-option[data-a='${question.correct}']`).classList.add('bg-green-200');
+                        }
+                        if (state.progress.module2.correct === questions.length) {
+                            showGoodJobAnimation();
+                        }
+                        updateProgress();
+                    }
+                });
+            }
+            
+            function setupModule3() {
+                const tooltip = document.getElementById('network-tooltip');
+                const moduleContainer = document.getElementById('module3');
+
+                moduleContainer.addEventListener('mouseover', e => {
+                    const part = e.target.closest('.network-part');
+                    if (part) {
+                         tooltip.innerHTML = part.dataset.info;
+                         tooltip.style.opacity = '1';
+                    }
+                });
+
+                moduleContainer.addEventListener('mousemove', e => {
+                    const part = e.target.closest('.network-part');
+                    if(part){
+                        const containerRect = moduleContainer.querySelector('svg').getBoundingClientRect();
+                        // Position tooltip relative to the SVG container
+                        tooltip.style.left = `${e.clientX - containerRect.left + 15}px`;
+                        tooltip.style.top = `${e.clientY - containerRect.top + 15}px`;
+                    }
+                });
+
+                moduleContainer.addEventListener('mouseout', e => {
+                    const part = e.target.closest('.network-part');
+                    if(part){
+                         tooltip.style.opacity = '0';
+                    }
+                });
+            }
+            
+            let animationFrameId;
+            function startTransformerAnimation() {
+                const canvas = document.getElementById('transformer-animation');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width, h = canvas.height;
+                let time = 0;
+                function draw() {
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.strokeStyle = '#4b5563';
+                    ctx.lineWidth = 10;
+                    ctx.strokeRect(50, 50, 200, 150);
+                    for (let i = 0; i < 5; i++) {
+                        ctx.beginPath();
+                        ctx.arc(50, 65 + i * 25, 15, Math.PI / 2, 3 * Math.PI / 2, true);
+                        ctx.strokeStyle = '#00A1E4';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    }
+                    for (let i = 0; i < 10; i++) {
+                        ctx.beginPath();
+                        ctx.arc(250, 55 + i * 13, 10, Math.PI / 2, 3 * Math.PI / 2);
+                        ctx.strokeStyle = '#F58220';
+                        ctx.lineWidth = 3;
+                        ctx.stroke();
+                    }
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(60, 60, 180, 130);
+                    ctx.clip();
+                    for(let i = 0; i < 10; i++){
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(129, 140, 248, ${Math.abs(Math.sin(time + i * 0.5)) * 0.5})`;
+                        ctx.lineWidth = 2;
+                        ctx.moveTo(50, 60 + i * 15);
+                        ctx.lineTo(250, 60 + i * 15);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                    time += 0.05;
+                    animationFrameId = requestAnimationFrame(draw);
+                }
+                cancelAnimationFrame(animationFrameId);
+                draw();
+            }
+            
+            // MODULE 5 & 6: REKENMODULES
+            let currentExercise = { '5': {}, '6': {} };
+            function setupExerciseModule(id) {
+                document.getElementById(`show-formula-btn-${id}`).addEventListener('click', (e) => {
+                    document.getElementById(`formula-explanation-${id}`).classList.toggle('hidden');
+                    e.target.textContent = e.target.textContent.includes('Toon') ? 'Verberg Formule(s)' : 'Toon Formule(s)';
+                });
+                document.getElementById(`start-exercise-btn-${id}`).addEventListener('click', () => {
+                     document.getElementById(`exercise-step-1-${id}`).classList.add('hidden');
+                     document.getElementById(`exercise-step-2-${id}`).classList.remove('hidden');
+                     generateExercise(id);
+                });
+                document.getElementById(`check-btn-${id}`).addEventListener('click', () => {
+                    if (checkAnswer(id)) {
+                         document.getElementById(`exercise-step-2-${id}`).classList.add('hidden');
+                         document.getElementById(`exercise-step-3-${id}`).classList.remove('hidden');
+                    }
+                });
+                document.getElementById(`answer-${id}`).addEventListener('keydown', (e) => {
+                     if (e.key === 'Enter') {
+                        if(checkAnswer(id)){
+                            document.getElementById(`exercise-step-2-${id}`).classList.add('hidden');
+                            document.getElementById(`exercise-step-3-${id}`).classList.remove('hidden');
+                        }
+                     }
+                });
+                document.getElementById(`new-exercise-btn-${id}`).addEventListener('click', () => resetExerciseModule(id));
+            
+                // Gemini Story Generator for Module 5
+                if (id === '5') {
+                    const generateStoryBtn = document.getElementById('generate-story-btn-5');
+                    generateStoryBtn.addEventListener('click', () => {
+                        const { vars, unknown } = currentExercise['5'];
+                        let givenVars = '';
+                        Object.keys(vars).forEach(key => {
+                             if (key !== unknown) {
+                                 givenVars += `${key}=${vars[key].val}, `;
+                             }
+                        });
+
+                        const systemPrompt = "Je bent een creatieve schrijver van educatieve content voor 3 HAVO natuurkunde. Creëer een korte, realistische verhaaltjessom (maximaal 3 zinnen) die de gegeven variabelen gebruikt en vraagt naar de onbekende variabele. Maak het herkenbaar voor een tiener (bv. over een telefoonoplader, gamingsetup, elektrische fiets). Geef alleen de verhaaltjessom als antwoord.";
+                        const userQuery = `Gegeven variabelen: ${givenVars.slice(0, -2)}. Gevraagde variabele: ${unknown}.`;
+                        
+                        const questionEl = document.getElementById(`question-5`);
+                        const tempLoadingEl = document.createElement('div');
+                        tempLoadingEl.innerHTML = `<div class="flex justify-center"><div class="spinner"></div></div>`;
+                        questionEl.innerHTML = '';
+                        questionEl.appendChild(tempLoadingEl);
+
+                        callGeminiForStory(systemPrompt, userQuery, questionEl, generateStoryBtn);
+                    });
+                }
+            }
+
+            async function callGeminiForStory(systemPrompt, userQuery, responseElement, buttonElement) {
+                 buttonElement.disabled = true;
+                 buttonElement.classList.add('hidden');
+                 await callGemini(systemPrompt, userQuery, responseElement.querySelector('.spinner').parentElement, responseElement, buttonElement);
+                 // The callGemini function will re-enable the button, but we want it to stay hidden after use.
+                 buttonElement.classList.add('hidden');
+            }
+            
+            function resetExerciseModule(id) {
+                document.getElementById(`exercise-step-1-${id}`).classList.remove('hidden');
+                document.getElementById(`exercise-step-2-${id}`).classList.add('hidden');
+                document.getElementById(`exercise-step-3-${id}`).classList.add('hidden');
+                document.getElementById(`explanation-container-${id}`).classList.add('hidden');
+                document.getElementById(`answer-${id}`).value = '';
+                document.getElementById(`answer-${id}`).classList.remove('border-green-500', 'border-red-500', 'border-2');
+                if (id === '5') {
+                    document.getElementById('generate-story-btn-5').classList.add('hidden');
+                }
+            }
+
+            function generateExercise(id) {
+                const questionEl = document.getElementById(`question-${id}`);
+                const answerInput = document.getElementById(`answer-${id}`);
+                answerInput.value = '';
+                answerInput.disabled = false;
+                document.getElementById(`check-btn-${id}`).disabled = false;
+                answerInput.classList.remove('border-green-500', 'border-red-500');
+                let vars, unknown, text = '';
+                if (id === '5') {
+                    const Np = Math.floor(Math.random() * 800) + 100;
+                    const Ns = Math.floor(Math.random() * 40000) + 2000;
+                    const Up = Math.floor(Math.random() * 20) + 10;
+                    const Us = (Up * Ns) / Np;
+                    vars = { Up: { val: Up, unit: 'V' }, Us: { val: Us, unit: 'V' }, Np: { val: Np, unit: ' windingen' }, Ns: { val: Ns, unit: ' windingen' }, };
+                    const keys = ['Up', 'Us', 'Np', 'Ns'];
+                    unknown = keys[Math.floor(Math.random() * keys.length)];
+                    text = `Een transformator heeft de volgende eigenschappen:<br>`;
+                    document.getElementById('generate-story-btn-5').classList.remove('hidden');
+                } else {
+                    const Up = 230;
+                    const Ip = parseFloat(((Math.random() * 5) + 1).toFixed(2));
+                    const Us = [5, 9, 12, 24][Math.floor(Math.random() * 4)];
+                    const Is = (Up * Ip) / Us;
+                    vars = { Up: { val: Up, unit: 'V' }, Us: { val: Us, unit: 'V' }, Ip: { val: Ip, unit: 'A' }, Is: { val: Is, unit: 'A' }, };
+                    const keys = ['Us', 'Ip', 'Is'];
+                    unknown = keys[Math.floor(Math.random() * keys.length)];
+                     text = `Een ideale transformator wordt aangesloten op ${Up}V. <br>`;
+                }
+                currentExercise[id] = { vars, unknown };
+                Object.keys(vars).forEach(key => {
+                    if (key !== unknown) {
+                        let value = vars[key].val;
+                        if(value > 1000 && (key === 'Us' || key === 'Up')) value = `${value/1000} kV`;
+                        else if (Number.isInteger(value)) value = value.toLocaleString('nl-NL');
+                        else value = parseFloat(value.toFixed(2)).toLocaleString('nl-NL');
+                        text += `&bull; ${formatVarName(key)} = ${value}${vars[key].unit}<br>`;
+                    }
+                });
+                text += `<br><strong>Bereken de ${formatVarName(unknown)}.</strong>`;
+                questionEl.innerHTML = text;
+            }
+            
+            function formatVarName(key) {
+                const names = {Up: 'primaire spanning (Up)', Us: 'secundaire spanning (Us)', Np: 'primaire windingen (Np)', Ns: 'secundaire windingen (Ns)', Ip: 'primaire stroomsterkte (Ip)', Is: 'secundaire stroomsterkte (Is)'};
+                return names[key] || key;
+            }
+
+            function checkAnswer(id) {
+                const answerInput = document.getElementById(`answer-${id}`);
+                const userAnswer = parseFloat(answerInput.value.replace(',', '.'));
+                if (isNaN(userAnswer)) {
+                    answerInput.classList.add('shake');
+                    setTimeout(() => answerInput.classList.remove('shake'), 500);
+                    return false;
+                }
+                const { vars, unknown } = currentExercise[id];
+                const correctAnswer = vars[unknown].val;
+                const tolerance = correctAnswer * 0.01;
+                const feedbackEl = document.getElementById(`feedback-${id}`);
+                const explanationContainer = document.getElementById(`explanation-container-${id}`);
+                const explanationContent = document.getElementById(`explanation-content-${id}`);
+                answerInput.disabled = true;
+                document.getElementById(`check-btn-${id}`).disabled = true;
+                if (Math.abs(userAnswer - correctAnswer) <= tolerance) {
+                    feedbackEl.innerHTML = `<span class="font-bold">Helemaal goed!</span><br>Je antwoord was ${userAnswer.toLocaleString('nl-NL')}, het precieze antwoord is ${correctAnswer.toLocaleString('nl-NL')}.`;
+                    feedbackEl.className = 'mt-4 text-sm p-4 rounded-lg bg-green-100 text-green-800';
+                    answerInput.classList.add('border-2', 'border-green-500');
+                    state.progress[`module${id}`].correct++;
+                    if (state.progress[`module${id}`].correct >= state.progress.module5.required) {
+                        showGoodJobAnimation();
+                    }
+                    updateProgress();
+                } else {
+                    feedbackEl.innerHTML = `<span class="font-bold">Bijna! Dit is een goed leermoment.</span><br>Het juiste antwoord was <strong>${correctAnswer.toLocaleString('nl-NL')}</strong>. Heb je de formule correct omgeschreven? Bekijk hieronder de stappen.`;
+                    feedbackEl.className = 'mt-4 text-sm p-4 rounded-lg bg-red-100 text-red-800';
+                    answerInput.classList.add('border-2', 'border-red-500');
+                    let expl = getExplanation(id, vars, unknown, correctAnswer);
+                    explanationContent.innerHTML = expl;
+                    explanationContainer.classList.remove('hidden');
+                }
+                return true;
+            }
+            
+            function getExplanation(id, vars, unknown, correctAnswer) {
+                let { Up, Us, Np, Ns, Ip, Is } = { ...vars };
+                Up = Up?.val; Us = Us?.val; Np = Np?.val; Ns = Ns?.val; Ip = Ip?.val; Is = Is?.val;
+                if (id === '5') {
+                    if (unknown === 'Us') return `Je gebruikt de formule: Up / Us = Np / Ns<br>Invullen: ${Up} / Us = ${Np} / ${Ns}<br>Kruislings vermenigvuldigen: Us * ${Np} = ${Up} * ${Ns}<br>Us = (${Up} * ${Ns}) / ${Np} = <strong>${correctAnswer.toFixed(2)} V</strong>`;
+                    if (unknown === 'Up') return `Je gebruikt de formule: Up / Us = Np / Ns<br>Invullen: Up / ${Us} = ${Np} / ${Ns}<br>Kruislings vermenigvuldigen: Up * ${Ns} = ${Us} * ${Np}<br>Up = (${Us} * ${Np}) / ${Ns} = <strong>${correctAnswer.toFixed(2)} V</strong>`;
+                    if (unknown === 'Ns') return `Je gebruikt de formule: Up / Us = Np / Ns<br>Invullen: ${Up} / ${Us} = ${Np} / Ns<br>Kruislings vermenigvuldigen: Ns * ${Up} = ${Us} * ${Np}<br>Ns = (${Us} * ${Np}) / ${Up} = <strong>${Math.round(correctAnswer)} windingen</strong>`;
+                    if (unknown === 'Np') return `Je gebruikt de formule: Up / Us = Np / Ns<br>Invullen: ${Up} / ${Us} = Np / ${Ns}<br>Kruislings vermenigvuldigen: Np * ${Us} = ${Up} * ${Ns}<br>Np = (${Up} * ${Ns}) / ${Us} = <strong>${Math.round(correctAnswer)} windingen</strong>`;
+                } else {
+                    if (unknown === 'Is') return `Je gebruikt de vermogensformule: Up * Ip = Us * Is<br>Invullen: ${Up} * ${Ip} = ${Us} * Is<br>Is = (${Up} * ${Ip}) / ${Us} = <strong>${correctAnswer.toFixed(2)} A</strong>`;
+                    if (unknown === 'Ip') return `Je gebruikt de vermogensformule: Up * Ip = Us * Is<br>Invullen: ${Up} * Ip = ${Us} * ${Is}<br>Ip = (${Us} * ${Is}) / ${Up} = <strong>${correctAnswer.toFixed(2)} A</strong>`;
+                    if (unknown === 'Us') return `Je gebruikt de vermogensformule: Up * Ip = Us * Is<br>Invullen: ${Up} * ${Ip} = Us * ${Is}<br>Us = (${Up} * ${Ip}) / ${Is} = <strong>${correctAnswer.toFixed(2)} V</strong>`;
+                }
+                return '';
+            }
+
+            // --- Start de app ---
+            init();
+        });
+    </script>
+
+</body>
+</html>
+
