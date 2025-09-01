@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Natuurkunde: Elektriciteit & Spanning</title>
     <!-- Laad Tailwind CSS via CDN -->
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Laad de Inter-lettertypefamilie -->
-    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS-stijlen -->
     <style>
@@ -87,7 +87,7 @@
     </script>
 </head>
 
-<body class="bg-gray-100 font-['Inter',_sans_serif] text-gray-800 flex">
+<body class="bg-gray-100 font-['Inter',_sans-serif] text-gray-800 flex">
 
     <!-- Navigatiemenu (Zijbalk) -->
     <aside id="sidebar"
@@ -111,7 +111,7 @@
         <!-- Header -->
         <header class="bg-white shadow-md p-4 flex items-center justify-between sticky top-0 z-20">
             <button id="menu-toggle" class="md:hidden p-2 rounded-md text-gray-600 hover:bg-gray-200">
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
@@ -460,7 +460,7 @@
             <h4 id="modal-title" class="text-xl font-bold text-dalton-darkblue mb-3">Titel</h4>
             <p id="modal-text" class="text-gray-700">Tekst</p>
             <button id="modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -477,7 +477,7 @@
                  <textarea id="gemini-question" class="w-full border-gray-300 rounded-md p-2 focus:border-dalton-lightblue focus:ring focus:ring-dalton-lightblue focus:ring-opacity-50" rows="3" placeholder="Typ hier je vraag..."></textarea>
                  <button id="gemini-ask-btn" class="mt-2 w-full bg-dalton-orange text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:bg-gray-400">Stel je vraag</button>
                  <button id="gemini-modal-close" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
-                    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                  </button>
             </div>
             <div id="gemini-response-container" class="mt-4 flex-grow overflow-y-auto bg-gray-50 p-4 rounded-md">
@@ -506,7 +506,7 @@
             // --- CONFIGURATIE ---
             // Voeg hier je eigen Google Gemini API-sleutel toe.
             // Je kunt er een gratis aanmaken via Google AI Studio.
-            const GEMINI_API_KEY = "VOEG_HIER_JE_EIGEN_API_KEY_IN";
+            const GEMINI_API_KEY = "AIzaSyBUqh2kzkEJn14vuHtcmO125WshRZCf1MY";
 
             // --- STATE MANAGEMENT ---
             const state = {
@@ -1031,18 +1031,4 @@
 
 </body>
 </html>
-```
-
-### Hoe nu verder?
-
-1.  **Vraag een API-sleutel aan:**
-    * Ga naar [Google AI Studio](https://aistudio.google.com/app/apikey).
-    * Klik op "Create API key in new project".
-    * Kopieer de sleutel die wordt gegenereerd. Deze is geheim en alleen voor jou.
-2.  **Voeg de sleutel toe aan de code:**
-    * Open het `index.html`-bestand.
-    * Zoek in de `<script>`-tag (helemaal onderaan) naar de volgende regel:
-        ```javascript
-        const GEMINI_API_KEY = "AIzaSyBUqh2kzkEJn14vuHtcmO125WshRZCf1MY";
-        
 
