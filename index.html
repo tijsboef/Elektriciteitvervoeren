@@ -337,8 +337,19 @@
                 <div id="module4" class="module-content hidden">
                     <h3 class="text-2xl font-bold mb-4 text-dalton-darkblue">Module 4: De Transformator</h3>
                     <div class="grid md:grid-cols-2 gap-8 items-center">
-                        <div class="bg-white p-6 rounded-lg shadow-lg">
-                            <canvas id="transformer-animation" height="250"></canvas>
+                        <div class="bg-white p-6 rounded-lg shadow-lg flex items-center justify-center">
+                           <svg viewBox="0 0 300 200" class="w-full h-auto max-w-sm mx-auto">
+                                <!-- Iron Core -->
+                                <rect x="50" y="30" width="200" height="140" rx="15" fill="none" stroke="#9ca3af" stroke-width="10" />
+
+                                <!-- Primary Coil (Np) -->
+                                <path d="M 50 60 C 30 60, 30 70, 50 70 S 30 80, 50 80 S 30 90, 50 90 S 30 100, 50 100" stroke="var(--dalton-lightblue)" stroke-width="5" fill="none" stroke-linecap="round"/>
+                                <text x="50" y="190" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Np</text>
+
+                                <!-- Secondary Coil (Ns) -->
+                                <path d="M 250 50 C 270 50, 270 58, 250 58 S 270 66, 250 66 S 270 74, 250 74 S 270 82, 250 82 S 270 90, 250 90 S 270 98, 250 98 S 270 106, 250 106 S 270 114, 250 114 S 270 122, 250 122 S 270 130, 250 130 S 270 138, 250 138 S 270 146, 250 146" stroke="var(--dalton-orange)" stroke-width="5" fill="none" stroke-linecap="round"/>
+                                <text x="250" y="190" text-anchor="middle" font-size="16" font-weight="bold" fill="#152D4F">Ns</text>
+                            </svg>
                         </div>
                         <div class="prose">
                             <p>Een transformator kan een wisselspanning omzetten naar een hogere of lagere wisselspanning. Hij bestaat uit:</p>
@@ -353,7 +364,7 @@
                                 <li>De ijzeren kern geleidt dit veld naar de secundaire spoel.</li>
                                 <li>Het veranderende magnetisch veld in de secundaire spoel wekt een wisselspanning op (inductie).</li>
                             </ol>
-                            <p>Het aantal windingen (lusjes koperdraad) op de spoelen bepaalt of de spanning omhoog of omlaag gaat.</p>
+                            <p>De verhouding van het aantal windingen (Np vs Ns) bepaalt of de spanning omhoog of omlaag gaat.</p>
                         </div>
                     </div>
                 </div>
@@ -581,9 +592,7 @@
                     link.classList.toggle('active', link.dataset.module === moduleName);
                 });
                 
-                if (moduleName === 'module4') {
-                    startTransformerAnimation();
-                } else if (moduleName === 'module5') {
+                if (moduleName === 'module5') {
                     resetExerciseModule('5');
                 } else if (moduleName === 'module6') {
                     resetExerciseModule('6');
@@ -805,50 +814,8 @@
                 });
             }
             
-            let animationFrameId;
-            function startTransformerAnimation() {
-                const canvas = document.getElementById('transformer-animation');
-                if (!canvas) return;
-                const ctx = canvas.getContext('2d');
-                const w = canvas.width, h = canvas.height;
-                let time = 0;
-                function draw() {
-                    ctx.clearRect(0, 0, w, h);
-                    ctx.strokeStyle = '#4b5563';
-                    ctx.lineWidth = 10;
-                    ctx.strokeRect(50, 50, 200, 150);
-                    for (let i = 0; i < 5; i++) {
-                        ctx.beginPath();
-                        ctx.arc(50, 65 + i * 25, 15, Math.PI / 2, 3 * Math.PI / 2, true);
-                        ctx.strokeStyle = '#00A1E4';
-                        ctx.lineWidth = 3;
-                        ctx.stroke();
-                    }
-                    for (let i = 0; i < 10; i++) {
-                        ctx.beginPath();
-                        ctx.arc(250, 55 + i * 13, 10, Math.PI / 2, 3 * Math.PI / 2);
-                        ctx.strokeStyle = '#F58220';
-                        ctx.lineWidth = 3;
-                        ctx.stroke();
-                    }
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(60, 60, 180, 130);
-                    ctx.clip();
-                    for(let i = 0; i < 10; i++){
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(129, 140, 248, ${Math.abs(Math.sin(time + i * 0.5)) * 0.5})`;
-                        ctx.lineWidth = 2;
-                        ctx.moveTo(50, 60 + i * 15);
-                        ctx.lineTo(250, 60 + i * 15);
-                        ctx.stroke();
-                    }
-                    ctx.restore();
-                    time += 0.05;
-                    animationFrameId = requestAnimationFrame(draw);
-                }
-                cancelAnimationFrame(animationFrameId);
-                draw();
+            function setupModule4() {
+                // Functie is leeg omdat de canvas animatie is verwijderd.
             }
             
             // MODULE 5 & 6: REKENMODULES
